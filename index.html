@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#101014">
+<title>Overload Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #101014;
+  --surface: #18191f;
+  --surface2: #1f2028;
+  --border: #28292f;
+  --border2: #32333c;
+  --lime: #d4f060;
+  --lime-dim: rgba(212,240,96,0.1);
+  --red: #e05c5c;
+  --red-dim: rgba(224,92,92,0.1);
+  --sky: #7eb8f7;
+  --sky-dim: rgba(126,184,247,0.1);
+  --amber: #f0b060;
+  --text: #e8eaf0;
+  --text2: #9095a8;
+  --text3: #50545f;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+}
+
+/* subtle top gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 300px;
+  background: radial-gradient(ellipse at 60% 0%, rgba(212,240,96,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  z-index: 2;
+  padding: 52px 20px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logo-wrap {}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+.logo span { color: var(--lime); }
+
+.logo-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text3);
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+.week-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.week-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.week-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 220px;
+  justify-content: flex-end;
+}
+
+.wk {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.wk:hover { border-color: var(--border2); color: var(--text2); }
+.wk.active { background: var(--lime); color: #1a1c00; border-color: var(--lime); font-weight: 600; }
+.wk.has-data::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--sky);
+}
+
+/* STATS BAR */
+.stats-bar {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-cell {
+  background: var(--bg);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-val.lime { color: var(--lime); }
+.stat-val.red { color: var(--red); }
+.stat-val.sky { color: var(--sky); }
+
+/* NAV */
+nav {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0;
+  padding: 14px 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--lime); border-bottom-color: var(--lime); }
+
+/* DAY INDICATOR */
+.day-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.day-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.day-label-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.day-dot.thu { background: var(--lime); box-shadow: 0 0 8px rgba(212,240,96,0.4); }
+.day-dot.fri { background: var(--sky); box-shadow: 0 0 8px rgba(126,184,247,0.4); }
+.day-dot.mon { background: var(--amber); box-shadow: 0 0 8px rgba(240,176,96,0.4); }
+.day-dot.tue { background: #c084fc; box-shadow: 0 0 8px rgba(192,132,252,0.4); }
+
+/* MAIN */
+main {
+  position: relative;
+  z-index: 1;
+  padding: 0 16px 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cards { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+
+/* EXERCISE CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.card-header {
+  padding: 14px 16px 10px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ex-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+}
+
+.ex-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}
+
+.target-chip {
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  text-align: right;
+}
+
+.target-chip .tc-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.target-chip .tc-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--lime);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.card-body {
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.log-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.inp-grp {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.inp-grp label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+.inp {
+  width: 90px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  padding: 10px 12px;
+  outline: none;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+}
+
+.inp:focus {
+  border-color: var(--lime);
+  background: rgba(212,240,96,0.04);
+}
+
+.inp::placeholder { color: var(--text3); }
+
+.log-btn {
+  background: var(--lime);
+  color: #1a1c00;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  -webkit-appearance: none;
+}
+
+.log-btn:active { transform: scale(0.96); opacity: 0.85; }
+
+.clear-btn {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+}
+
+.clear-btn:active { border-color: var(--red); color: var(--red); }
+
+/* result */
+.result {
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+
+.result.show { display: flex; }
+.result.hit { background: rgba(212,240,96,0.08); border: 1px solid rgba(212,240,96,0.2); color: var(--lime); }
+.result.close { background: rgba(126,184,247,0.08); border: 1px solid rgba(126,184,247,0.2); color: var(--sky); }
+.result.missed { background: rgba(224,92,92,0.08); border: 1px solid rgba(224,92,92,0.2); color: var(--red); }
+
+.rdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.hit .rdot { background: var(--lime); }
+.close .rdot { background: var(--sky); }
+.missed .rdot { background: var(--red); }
+
+/* logged card states */
+.card.logged-hit { border-color: rgba(212,240,96,0.25); }
+.card.logged-close { border-color: rgba(126,184,247,0.25); }
+.card.logged-missed { border-color: rgba(224,92,92,0.25); }
+
+/* HISTORY */
+.hist-ex { margin-bottom: 16px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+
+.hist-ex-name {
+  background: var(--surface2);
+  padding: 12px 16px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.hist-ex-name span {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  font-weight: 400;
+}
+
+.hist-rows { background: var(--surface); }
+
+.hist-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 1fr 60px;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  align-items: center;
+}
+
+.hist-row:last-child { border-bottom: none; }
+.hist-hdr { background: var(--surface2); font-size: 9px; letter-spacing: 1px; color: var(--text3); }
+.hist-wk { color: var(--text3); font-size: 10px; }
+.hist-target { color: var(--text3); }
+.sh { color: var(--lime); }
+.sc { color: var(--sky); }
+.sm { color: var(--red); }
+.se { color: var(--border2); }
+
+.hidden { display: none; }
+
+.empty {
+  text-align: center;
+  padding: 48px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  line-height: 2.5;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo-wrap">
+      <div class="logo">OVERLOAD<span>.</span></div>
+      <div class="logo-sub">12 Week Progressive Tracker</div>
+    </div>
+    <div class="week-control">
+      <div class="week-lbl">Current Week</div>
+      <div class="week-grid" id="weekGrid"></div>
+    </div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-cell"><div class="stat-lbl">Hit</div><div class="stat-val lime" id="sHit">—</div></div>
+  <div class="stat-cell"><div class="stat-lbl">Missed</div><div class="stat-val red" id="sMissed">—</div></div>
+  <div class="stat-cell"><div class="stat-lbl">Logged</div><div class="stat-val sky" id="sTotal">—</div></div>
+</div>
+
+<nav>
+  <button class="tab active" onclick="switchTab('thu')">THU · Push</button>
+  <button class="tab" onclick="switchTab('fri')">FRI · Pull</button>
+  <button class="tab" onclick="switchTab('mon')">MON · Legs</button>
+  <button class="tab" onclick="switchTab('tue')">TUE · Upper</button>
+  <button class="tab" onclick="switchTab('hist')">History</button>
+</nav>
+
+<main>
+  <div id="tab-thu"></div>
+  <div id="tab-fri" class="hidden"></div>
+  <div id="tab-mon" class="hidden"></div>
+  <div id="tab-tue" class="hidden"></div>
+  <div id="tab-hist" class="hidden"></div>
+</main>
+
+<script>
+const WEEKS = 12;
+let currentWeek = 1;
+let currentTab = 'thu';
+let logs = {};
+try { logs = JSON.parse(localStorage.getItem('overload_v3') || '{}'); } catch(e) {}
+
+const PLAN = {
+  thu: {
+    label: "THURSDAY — PUSH — HEAVY",
+    dot: "thu",
+    exercises: [
+      { id:"incline_db", name:"Incline DB Press", meta:"4×5-7 · Heavy · Rest 2-3 min",
+        targets:["70x5","70x6","70x7","75x5","75x6","75x7","80x5","80x6","80x7","85x5","85x6","85x7"] },
+      { id:"flat_machine", name:"Flat Machine Press", meta:"3×8-10 · Moderate · Rest 90s",
+        targets:["160x8","160x9","160x10","170x8","170x9","170x10","180x8","180x9","180x10","190x8","190x9","190x10"] },
+      { id:"pec_deck", name:"Pec Deck", meta:"3×12-15 · Light · Rest 60s",
+        targets:["150x12","150x13","150x15","160x12","160x13","160x15","170x12","170x13","170x15","180x12","180x13","180x15"] },
+      { id:"lat_raise_thu", name:"Cable Lateral Raise", meta:"4×12-15 · Light · Rest 60s",
+        targets:["20x12","20x13","20x15","22.5x12","22.5x13","22.5x15","25x12","25x13","25x15","27.5x12","27.5x13","27.5x15"] },
+      { id:"oh_ext_thu", name:"Overhead Tricep Extension (rope)", meta:"2×12-15 · Light · Rest 60s",
+        targets:["115x12","115x13","115x15","120x12","120x13","120x15","125x12","125x13","125x15","130x12","130x13","130x15"] },
+      { id:"pushdown_thu", name:"Cable Pushdown (straight bar)", meta:"2×12-15 · Light · Rest 60s",
+        targets:["150x12","150x13","150x15","160x12","160x13","160x15","170x12","170x13","170x15","180x12","180x13","180x15"] },
+    ]
+  },
+  fri: {
+    label: "FRIDAY — PULL — HEAVY",
+    dot: "fri",
+    exercises: [
+      { id:"cs_row", name:"Chest Supported Row", meta:"4×5-7 · Heavy · Rest 2-3 min",
+        targets:["135x5","135x6","135x7","145x5","145x6","145x7","155x5","155x6","155x7","165x5","165x6","165x7"] },
+      { id:"wide_pull_fri", name:"Wide Grip Pulldown", meta:"3×8-10 · Moderate · Rest 90s",
+        targets:["160x8","160x9","160x10","170x8","170x9","170x10","180x8","180x9","180x10","190x8","190x9","190x10"] },
+      { id:"underhand_pull", name:"Underhand Pulldown", meta:"3×10-12 · Moderate · Rest 90s",
+        targets:["100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12","130x10","130x11","130x12"] },
+      { id:"face_pull", name:"High Cable Face Pull (rope)", meta:"3×15-20 · Light · Rest 60s",
+        targets:["50x15","50x17","50x20","55x15","55x17","55x20","60x15","60x17","60x20","65x15","65x17","65x20"] },
+      { id:"incline_curl", name:"Incline DB Curl", meta:"2×8-10 · Moderate · Rest 90s",
+        targets:["22.5x8","22.5x9","22.5x10","25x8","25x9","25x10","27.5x8","27.5x9","27.5x10","30x8","30x9","30x10"] },
+      { id:"preacher_curl", name:"Preacher Curl", meta:"2×12-15 · Light · Rest 60s",
+        targets:["45x12","45x13","45x15","50x12","50x13","50x15","55x12","55x13","55x15","60x12","60x13","60x15"] },
+    ]
+  },
+  mon: {
+    label: "MONDAY — LEGS — HEAVY",
+    dot: "mon",
+    exercises: [
+      { id:"barbell_squat", name:"Barbell Squat", meta:"3×5-8 · Heavy · Rest 2-3 min",
+        targets:["135x10","135x11","135x12","145x10","145x11","145x12","155x10","155x11","155x12","165x10","165x11","165x12"] },
+      { id:"hack_squat", name:"Hack Squat", meta:"3×8-10 · Moderate · Rest 90s",
+        targets:["find weight x8","same x9","same x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10"] },
+      { id:"hip_thrust", name:"Hip Thrust", meta:"3×8-10 · Moderate · Rest 90s",
+        targets:["find weight x8","same x9","same x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10"] },
+      { id:"seated_leg_curl", name:"Seated Leg Curl", meta:"3×10-12 · Light · Rest 60s",
+        targets:["80x10","80x11","80x12","85x10","85x11","85x12","90x10","90x11","90x12","95x10","95x11","95x12"] },
+      { id:"leg_extension", name:"Leg Extension", meta:"3×10-12 · Light · Rest 60s",
+        targets:["100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12","130x10","130x11","130x12"] },
+      { id:"standing_calf", name:"Standing Calf Raise", meta:"3×10-12 · Light · Rest 60s",
+        targets:["100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12","130x10","130x11","130x12"] },
+      { id:"cable_crunch_mon", name:"Cable Crunch", meta:"3×10-12 · Heavy · Rest 60s",
+        targets:["150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12","180x10","180x11","180x12"] },
+      { id:"leg_raise_mon", name:"Hanging Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
+        targets:["BWx10","BWx11","BWx12","BWx12","BWx13","BWx15","BWx13","BWx14","BWx15","BWx14","BWx15","BWx15"] },
+    ]
+  },
+  tue: {
+    label: "TUESDAY — UPPER — MODERATE",
+    dot: "tue",
+    exercises: [
+      { id:"cable_fly", name:"Low to High Cable Fly", meta:"3×12-15 · Light · Rest 60s",
+        targets:["find weight x12","same x13","same x15","+5lbs x12","+5lbs x13","+5lbs x15","+5lbs x12","+5lbs x13","+5lbs x15","+5lbs x12","+5lbs x13","+5lbs x15"] },
+      { id:"wide_pull_tue", name:"Wide Grip Pulldown", meta:"3×10-12 · Moderate · Rest 90s",
+        targets:["140x10","140x11","140x12","150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12"] },
+      { id:"vbar_row", name:"V-Bar Cable Row", meta:"3×10-12 · Moderate · Rest 90s",
+        targets:["find weight x10","same x11","same x12","+10lbs x10","+10lbs x11","+10lbs x12","+10lbs x10","+10lbs x11","+10lbs x12","+10lbs x10","+10lbs x11","+10lbs x12"] },
+      { id:"lat_raise_tue", name:"Cable Lateral Raise", meta:"3×15-20 · Light · Rest 60s",
+        targets:["20x15","20x17","20x20","22.5x15","22.5x17","22.5x20","25x15","25x17","25x20","27.5x15","27.5x17","27.5x20"] },
+      { id:"hammer_curl", name:"Cable Hammer Curl", meta:"2×10-12 · Light · Rest 60s",
+        targets:["90x10","90x11","90x12","100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12"] },
+      { id:"oh_ext_tue", name:"Overhead Extension (rope)", meta:"2×12-15 · Light · Rest 60s",
+        targets:["110x12","110x13","110x15","115x12","115x13","115x15","120x12","120x13","120x15","125x12","125x13","125x15"] },
+      { id:"pushdown_tue", name:"Tricep Pushdown (straight bar)", meta:"2×12-15 · Light · Rest 60s",
+        targets:["135x12","135x13","135x15","140x12","140x13","140x15","145x12","145x13","145x15","150x12","150x13","150x15"] },
+      { id:"cable_crunch_tue", name:"Cable Crunch", meta:"3×10-12 · Heavy · Rest 60s",
+        targets:["150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12","180x10","180x11","180x12"] },
+      { id:"leg_raise_tue", name:"Hanging Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
+        targets:["BWx10","BWx11","BWx12","BWx12","BWx13","BWx15","BWx13","BWx14","BWx15","BWx14","BWx15","BWx15"] },
+    ]
+  }
+};
+
+function save() { try { localStorage.setItem('overload_v3', JSON.stringify(logs)); } catch(e) {} }
+function getLog(w, id) { return logs[`w${w}_${id}`] || null; }
+function setLog(w, id, weight, reps) { logs[`w${w}_${id}`] = { weight, reps }; save(); }
+function delLog(w, id) { delete logs[`w${w}_${id}`]; save(); }
+
+function parseTarget(t) {
+  if (!t || t.startsWith('BW') || t.includes('find') || t.includes('same') || t.includes('+')) return null;
+  const p = t.split('x');
+  if (p.length < 2) return null;
+  return { weight: parseFloat(p[0]), reps: parseInt(p[1]) };
+}
+
+function getStatus(target, lw, lr) {
+  const t = parseTarget(target);
+  if (!t) return 'hit';
+  if (lw >= t.weight && lr >= t.reps) return 'hit';
+  if (lw >= t.weight * 0.95 && lr >= t.reps - 1) return 'close';
+  return 'missed';
+}
+
+function statusMsg(s) {
+  if (s === 'hit') return '✓ Target hit';
+  if (s === 'close') return '~ Almost — repeat this weight next week';
+  return '✗ Missed — repeat same weight next week';
+}
+
+function buildWeekGrid() {
+  const g = document.getElementById('weekGrid');
+  g.innerHTML = '';
+  for (let w = 1; w <= WEEKS; w++) {
+    const b = document.createElement('button');
+    b.className = 'wk' + (w === currentWeek ? ' active' : '');
+    const hasData = Object.keys(logs).some(k => k.startsWith(`w${w}_`));
+    if (hasData && w !== currentWeek) b.classList.add('has-data');
+    b.textContent = w;
+    b.onclick = () => { currentWeek = w; buildWeekGrid(); renderCurrentTab(); updateStats(); };
+    g.appendChild(b);
+  }
+}
+
+function renderTab(key) {
+  const day = PLAN[key];
+  const el = document.getElementById(`tab-${key}`);
+
+  let html = `<div class="day-indicator"><div class="day-dot ${day.dot}"></div><div class="day-label-text">${day.label}</div></div><div class="cards" id="cards-${key}">`;
+  el.innerHTML = html + '</div>';
+
+  const cards = document.getElementById(`cards-${key}`);
+  day.exercises.forEach(ex => {
+    const target = ex.targets[currentWeek - 1];
+    const logged = getLog(currentWeek, ex.id);
+    const status = logged ? getStatus(target, logged.weight, logged.reps) : null;
+
+    const c = document.createElement('div');
+    c.className = 'card' + (status ? ` logged-${status}` : '');
+
+    c.innerHTML = `
+      <div class="card-header">
+        <div>
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-meta">${ex.meta}</div>
+        </div>
+        <div class="target-chip">
+          <div class="tc-lbl">WK ${currentWeek}</div>
+          <div class="tc-val">${target}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="log-row">
+          <div class="inp-grp">
+            <label>Weight (lbs)</label>
+            <input class="inp" id="w-${ex.id}" type="number" step="0.5" inputmode="decimal" placeholder="0" value="${logged ? logged.weight : ''}">
+          </div>
+          <div class="inp-grp">
+            <label>Reps</label>
+            <input class="inp" id="r-${ex.id}" type="number" inputmode="numeric" placeholder="0" value="${logged ? logged.reps : ''}">
+          </div>
+          <button class="log-btn" onclick="doLog('${key}','${ex.id}','${target}')">LOG</button>
+          ${logged ? `<button class="clear-btn" onclick="doClear('${key}','${ex.id}')">CLR</button>` : ''}
+        </div>
+        <div class="result ${status ? status + ' show' : ''}" id="res-${ex.id}">
+          <div class="rdot"></div>
+          <span>${status ? statusMsg(status) : ''}</span>
+        </div>
+      </div>`;
+    cards.appendChild(c);
+  });
+}
+
+function doLog(key, id, target) {
+  const w = parseFloat(document.getElementById(`w-${id}`).value);
+  const r = parseInt(document.getElementById(`r-${id}`).value);
+  if (!w || !r) return;
+  setLog(currentWeek, id, w, r);
+  renderTab(key);
+  updateStats();
+  buildWeekGrid();
+}
+
+function doClear(key, id) {
+  delLog(currentWeek, id);
+  renderTab(key);
+  updateStats();
+  buildWeekGrid();
+}
+
+function renderHistory() {
+  const el = document.getElementById('tab-hist');
+  const allEx = [...PLAN.thu.exercises, ...PLAN.fri.exercises, ...PLAN.mon.exercises, ...PLAN.tue.exercises];
+  const dayOf = id => {
+    if (PLAN.thu.exercises.find(e=>e.id===id)) return 'THU';
+    if (PLAN.fri.exercises.find(e=>e.id===id)) return 'FRI';
+    if (PLAN.mon.exercises.find(e=>e.id===id)) return 'MON';
+    return 'TUE';
+  };
+
+  let html = '<div class="day-indicator"><div class="day-dot thu"></div><div class="day-label-text">ALL EXERCISES — 12 WEEK HISTORY</div></div>';
+  allEx.forEach(ex => {
+    html += `<div class="hist-ex">
+      <div class="hist-ex-name">${ex.name}<span>${dayOf(ex.id)}</span></div>
+      <div class="hist-rows">
+        <div class="hist-row hist-hdr"><div>WK</div><div>TARGET</div><div>ACTUAL</div><div>STATUS</div></div>`;
+    for (let w = 1; w <= WEEKS; w++) {
+      const t = ex.targets[w-1];
+      const lg = getLog(w, ex.id);
+      let actual = `<span class="se">—</span>`;
+      let stat = `<span class="se">—</span>`;
+      if (lg) {
+        const s = getStatus(t, lg.weight, lg.reps);
+        actual = `${lg.weight}×${lg.reps}`;
+        const cls = s==='hit'?'sh':s==='close'?'sc':'sm';
+        const icon = s==='hit'?'✓':s==='close'?'~':'✗';
+        stat = `<span class="${cls}">${icon}</span>`;
+      }
+      html += `<div class="hist-row"><div class="hist-wk">W${w}</div><div class="hist-target">${t}</div><div>${actual}</div><div>${stat}</div></div>`;
+    }
+    html += `</div></div>`;
+  });
+  el.innerHTML = html;
+}
+
+function updateStats() {
+  const allEx = [...PLAN.thu.exercises, ...PLAN.fri.exercises, ...PLAN.mon.exercises, ...PLAN.tue.exercises];
+  let hit=0, missed=0, total=0;
+  allEx.forEach(ex => {
+    const lg = getLog(currentWeek, ex.id);
+    if (lg) {
+      total++;
+      const s = getStatus(ex.targets[currentWeek-1], lg.weight, lg.reps);
+      if (s==='hit') hit++;
+      else if (s==='missed') missed++;
+    }
+  });
+  document.getElementById('sHit').textContent = total ? hit : '—';
+  document.getElementById('sMissed').textContent = total ? missed : '—';
+  document.getElementById('sTotal').textContent = total || '—';
+}
+
+function switchTab(key) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabs = ['thu','fri','mon','tue','hist'];
+  document.querySelectorAll('.tab')[tabs.indexOf(key)].classList.add('active');
+  tabs.forEach(t => document.getElementById(`tab-${t}`).classList.toggle('hidden', t!==key));
+  currentTab = key;
+  if (key==='hist') renderHistory();
+  else renderTab(key);
+}
+
+function renderCurrentTab() {
+  if (currentTab==='hist') renderHistory();
+  else renderTab(currentTab);
+}
+
+buildWeekGrid();
+renderTab('thu');
+updateStats();
+</script>
+</body>
+</html>
