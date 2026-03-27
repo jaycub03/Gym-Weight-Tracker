@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
 :root {
   --bg: #101014;
   --surface: #18191f;
@@ -24,11 +23,11 @@
   --sky: #7eb8f7;
   --sky-dim: rgba(126,184,247,0.1);
   --amber: #f0b060;
+  --purple: #c084fc;
   --text: #e8eaf0;
   --text2: #9095a8;
   --text3: #50545f;
 }
-
 body {
   background: var(--bg);
   color: var(--text);
@@ -36,8 +35,6 @@ body {
   min-height: 100vh;
   padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
 }
-
-/* subtle top gradient */
 body::before {
   content: '';
   position: fixed;
@@ -47,15 +44,12 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
-
-/* HEADER */
 header {
   position: relative;
   z-index: 2;
   padding: 52px 20px 20px;
   border-bottom: 1px solid var(--border);
 }
-
 .header-top {
   display: flex;
   align-items: flex-start;
@@ -63,394 +57,157 @@ header {
   gap: 12px;
   flex-wrap: wrap;
 }
-
-.logo-wrap {}
-.logo {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text);
-}
+.logo { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); }
 .logo span { color: var(--lime); }
-
-.logo-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--text3);
-  margin-top: 3px;
-  text-transform: uppercase;
-}
-
-.week-control {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.week-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-
-.week-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  max-width: 220px;
-  justify-content: flex-end;
-}
-
+.logo-sub { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px; color: var(--text3); margin-top: 3px; text-transform: uppercase; }
+.week-control { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.week-lbl { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text3); text-transform: uppercase; }
+.week-grid { display: flex; flex-wrap: wrap; gap: 4px; max-width: 220px; justify-content: flex-end; }
 .wk {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text3);
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  position: relative;
+  width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text3); font-family: 'DM Mono', monospace;
+  font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; position: relative;
 }
-
 .wk:hover { border-color: var(--border2); color: var(--text2); }
 .wk.active { background: var(--lime); color: #1a1c00; border-color: var(--lime); font-weight: 600; }
-.wk.has-data::after {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  right: 3px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--sky);
-}
-
-/* STATS BAR */
-.stats-bar {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.stat-cell {
-  background: var(--bg);
-  padding: 14px 16px;
-  text-align: center;
-}
-
-.stat-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin-bottom: 5px;
-}
-
-.stat-val {
-  font-family: 'Syne', sans-serif;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1;
-}
-
+.wk.has-data::after { content: ''; position: absolute; bottom: 3px; right: 3px; width: 4px; height: 4px; border-radius: 50%; background: var(--sky); }
+.stats-bar { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+.stat-cell { background: var(--bg); padding: 14px 16px; text-align: center; }
+.stat-lbl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 5px; }
+.stat-val { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; }
 .stat-val.lime { color: var(--lime); }
 .stat-val.red { color: var(--red); }
 .stat-val.sky { color: var(--sky); }
-
-/* NAV */
-nav {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+nav { position: relative; z-index: 2; display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 nav::-webkit-scrollbar { display: none; }
-
-.tab {
-  flex-shrink: 0;
-  padding: 14px 18px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--text3);
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.15s;
-  background: none;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
+.tab { flex-shrink: 0; padding: 14px 18px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; background: none; border-left: none; border-right: none; border-top: none; white-space: nowrap; text-transform: uppercase; }
 .tab:hover { color: var(--text2); }
 .tab.active { color: var(--lime); border-bottom-color: var(--lime); }
-
-/* DAY INDICATOR */
-.day-indicator {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.day-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.day-label-text {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-
+.day-indicator { display: flex; align-items: center; gap: 10px; padding: 14px 0 10px; }
+.day-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.day-label-text { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 3px; color: var(--text3); text-transform: uppercase; }
 .day-dot.thu { background: var(--lime); box-shadow: 0 0 8px rgba(212,240,96,0.4); }
 .day-dot.fri { background: var(--sky); box-shadow: 0 0 8px rgba(126,184,247,0.4); }
 .day-dot.mon { background: var(--amber); box-shadow: 0 0 8px rgba(240,176,96,0.4); }
-.day-dot.tue { background: #c084fc; box-shadow: 0 0 8px rgba(192,132,252,0.4); }
-
-/* MAIN */
-main {
-  position: relative;
-  z-index: 1;
-  padding: 0 16px 16px;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
+.day-dot.tue { background: var(--purple); box-shadow: 0 0 8px rgba(192,132,252,0.4); }
+main { position: relative; z-index: 1; padding: 0 16px 16px; max-width: 680px; margin: 0 auto; }
 .cards { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
-
-/* EXERCISE CARD */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.card-header {
-  padding: 14px 16px 10px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.ex-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.2px;
-  line-height: 1.2;
-}
-
-.ex-meta {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--text3);
-  margin-top: 4px;
-  letter-spacing: 0.5px;
-}
-
-.target-chip {
-  flex-shrink: 0;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 6px 10px;
-  text-align: right;
-}
-
-.target-chip .tc-lbl {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-
-.target-chip .tc-val {
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  color: var(--lime);
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.card-body {
-  padding: 0 16px 14px;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-
-.log-row {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-.inp-grp {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.inp-grp label {
-  font-family: 'DM Mono', monospace;
-  font-size: 8px;
-  letter-spacing: 2px;
-  color: var(--text3);
-  text-transform: uppercase;
-}
-
-.inp {
-  width: 90px;
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-size: 15px;
-  padding: 10px 12px;
-  outline: none;
-  transition: all 0.15s;
-  -webkit-appearance: none;
-}
-
-.inp:focus {
-  border-color: var(--lime);
-  background: rgba(212,240,96,0.04);
-}
-
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
+.card-header { padding: 14px 16px 10px; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.ex-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; line-height: 1.2; }
+.ex-meta { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); margin-top: 4px; letter-spacing: 0.5px; }
+.target-chip { flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 6px 10px; text-align: right; }
+.tc-lbl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; }
+.tc-val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--lime); font-weight: 500; margin-top: 2px; }
+.card-body { padding: 12px 16px 14px; border-top: 1px solid var(--border); }
+.log-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.inp-grp { display: flex; flex-direction: column; gap: 5px; }
+.inp-grp label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; }
+.inp { width: 90px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 15px; padding: 10px 12px; outline: none; transition: all 0.15s; -webkit-appearance: none; }
+.inp:focus { border-color: var(--lime); background: rgba(212,240,96,0.04); }
 .inp::placeholder { color: var(--text3); }
-
-.log-btn {
-  background: var(--lime);
-  color: #1a1c00;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  text-transform: uppercase;
-  -webkit-appearance: none;
-}
-
+.log-btn { background: var(--lime); color: #1a1c00; border: none; border-radius: 8px; padding: 10px 16px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-transform: uppercase; -webkit-appearance: none; }
 .log-btn:active { transform: scale(0.96); opacity: 0.85; }
-
-.clear-btn {
-  background: none;
-  border: 1px solid var(--border2);
-  color: var(--text3);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  cursor: pointer;
-  transition: all 0.15s;
-  -webkit-appearance: none;
-}
-
+.clear-btn { background: none; border: 1px solid var(--border2); color: var(--text3); border-radius: 8px; padding: 10px 12px; font-family: 'DM Mono', monospace; font-size: 10px; cursor: pointer; transition: all 0.15s; -webkit-appearance: none; }
 .clear-btn:active { border-color: var(--red); color: var(--red); }
-
-/* result */
-.result {
-  margin-top: 10px;
-  padding: 9px 12px;
-  border-radius: 8px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  display: none;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: 0.3px;
-}
-
+.result { margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 11px; display: none; align-items: center; gap: 8px; letter-spacing: 0.3px; line-height: 1.5; }
 .result.show { display: flex; }
 .result.hit { background: rgba(212,240,96,0.08); border: 1px solid rgba(212,240,96,0.2); color: var(--lime); }
 .result.close { background: rgba(126,184,247,0.08); border: 1px solid rgba(126,184,247,0.2); color: var(--sky); }
 .result.missed { background: rgba(224,92,92,0.08); border: 1px solid rgba(224,92,92,0.2); color: var(--red); }
-
-.rdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.rdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; flex-shrink: 0; margin-top: 2px; align-self: flex-start; }
 .hit .rdot { background: var(--lime); }
 .close .rdot { background: var(--sky); }
 .missed .rdot { background: var(--red); }
-
-/* logged card states */
+.result-text { display: flex; flex-direction: column; gap: 4px; }
+.result-main { font-size: 11px; }
+.result-tip { font-size: 10px; opacity: 0.7; }
 .card.logged-hit { border-color: rgba(212,240,96,0.25); }
 .card.logged-close { border-color: rgba(126,184,247,0.25); }
 .card.logged-missed { border-color: rgba(224,92,92,0.25); }
 
-/* HISTORY */
-.hist-ex { margin-bottom: 16px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
-
-.hist-ex-name {
-  background: var(--surface2);
-  padding: 12px 16px;
+/* GUIDE SECTION */
+.guide-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+.guide-title {
   font-family: 'Syne', sans-serif;
   font-size: 13px;
   font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.guide-title::before { content: '?'; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--border2); font-size: 11px; color: var(--text2); flex-shrink: 0; }
+.guide-row {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+.guide-row:last-child { border-bottom: none; padding-bottom: 0; }
+.guide-scenario {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text2);
+  flex: 1;
+  line-height: 1.5;
+}
+.guide-action {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  flex: 1;
+  line-height: 1.5;
+  text-align: right;
+}
+.ga-hit { color: var(--lime); }
+.ga-close { color: var(--sky); }
+.ga-missed { color: var(--red); }
+.ga-normal { color: var(--text2); }
+
+/* REST GUIDE */
+.rest-guide {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 8px;
+}
+.rest-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.rest-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px 0;
   border-bottom: 1px solid var(--border);
-}
-
-.hist-ex-name span {
   font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--text3);
-  letter-spacing: 2px;
-  font-weight: 400;
+  font-size: 10px;
 }
+.rest-row:last-child { border-bottom: none; padding-bottom: 0; }
+.rest-type { color: var(--text2); }
+.rest-time { color: var(--lime); font-weight: 500; }
 
+/* HISTORY */
+.hist-ex { margin-bottom: 16px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+.hist-ex-name { background: var(--surface2); padding: 12px 16px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.hist-ex-name span { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text3); letter-spacing: 2px; font-weight: 400; }
 .hist-rows { background: var(--surface); }
-
-.hist-row {
-  display: grid;
-  grid-template-columns: 48px 1fr 1fr 60px;
-  gap: 8px;
-  padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  align-items: center;
-}
-
+.hist-row { display: grid; grid-template-columns: 48px 1fr 1fr 60px; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-family: 'DM Mono', monospace; font-size: 11px; align-items: center; }
 .hist-row:last-child { border-bottom: none; }
 .hist-hdr { background: var(--surface2); font-size: 9px; letter-spacing: 1px; color: var(--text3); }
 .hist-wk { color: var(--text3); font-size: 10px; }
@@ -459,30 +216,20 @@ main {
 .sc { color: var(--sky); }
 .sm { color: var(--red); }
 .se { color: var(--border2); }
-
 .hidden { display: none; }
-
-.empty {
-  text-align: center;
-  padding: 48px 20px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 1px;
-  line-height: 2.5;
-}
+.empty { text-align: center; padding: 48px 20px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 1px; line-height: 2.5; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="header-top">
-    <div class="logo-wrap">
+    <div>
       <div class="logo">OVERLOAD<span>.</span></div>
-      <div class="logo-sub">12 Week Progressive Tracker</div>
+      <div class="logo-sub">12 Week Progressive Tracker — Jacob</div>
     </div>
     <div class="week-control">
-      <div class="week-lbl">Current Week</div>
+      <div class="week-lbl">Week</div>
       <div class="week-grid" id="weekGrid"></div>
     </div>
   </div>
@@ -499,6 +246,7 @@ main {
   <button class="tab" onclick="switchTab('fri')">FRI · Pull</button>
   <button class="tab" onclick="switchTab('mon')">MON · Legs</button>
   <button class="tab" onclick="switchTab('tue')">TUE · Upper</button>
+  <button class="tab" onclick="switchTab('guide')">Guide</button>
   <button class="tab" onclick="switchTab('hist')">History</button>
 </nav>
 
@@ -507,6 +255,7 @@ main {
   <div id="tab-fri" class="hidden"></div>
   <div id="tab-mon" class="hidden"></div>
   <div id="tab-tue" class="hidden"></div>
+  <div id="tab-guide" class="hidden"></div>
   <div id="tab-hist" class="hidden"></div>
 </main>
 
@@ -515,7 +264,7 @@ const WEEKS = 12;
 let currentWeek = 1;
 let currentTab = 'thu';
 let logs = {};
-try { logs = JSON.parse(localStorage.getItem('overload_v3') || '{}'); } catch(e) {}
+try { logs = JSON.parse(localStorage.getItem('overload_v4') || '{}'); } catch(e) {}
 
 const PLAN = {
   thu: {
@@ -524,16 +273,16 @@ const PLAN = {
     exercises: [
       { id:"incline_db", name:"Incline DB Press", meta:"4×5-7 · Heavy · Rest 2-3 min",
         targets:["70x5","70x6","70x7","75x5","75x6","75x7","80x5","80x6","80x7","85x5","85x6","85x7"] },
-      { id:"flat_machine", name:"Flat Machine Press", meta:"3×8-10 · Moderate · Rest 90s",
+      { id:"flat_machine", name:"Flat Machine Press", meta:"3×8-10 · Moderate · Rest 90s-2min",
         targets:["160x8","160x9","160x10","170x8","170x9","170x10","180x8","180x9","180x10","190x8","190x9","190x10"] },
-      { id:"pec_deck", name:"Pec Deck", meta:"3×12-15 · Light · Rest 60s",
-        targets:["150x12","150x13","150x15","160x12","160x13","160x15","170x12","170x13","170x15","180x12","180x13","180x15"] },
-      { id:"lat_raise_thu", name:"Cable Lateral Raise", meta:"4×12-15 · Light · Rest 60s",
-        targets:["20x12","20x13","20x15","22.5x12","22.5x13","22.5x15","25x12","25x13","25x15","27.5x12","27.5x13","27.5x15"] },
-      { id:"oh_ext_thu", name:"Overhead Tricep Extension (rope)", meta:"2×12-15 · Light · Rest 60s",
+      { id:"butterfly", name:"Butterfly Pec Dec (elbows)", meta:"3×12-15 · Light · Rest 90s",
+        targets:["120x12","120x13","120x15","130x12","130x13","130x15","140x12","140x13","140x15","150x12","150x13","150x15"] },
+      { id:"lat_raise_thu", name:"Cable Lateral Raise", meta:"4×12-15 · Light · Rest 90s",
+        targets:["20x12","20x13","20x15","20x12-slow","20x13-slow","20x15-slow","20x12-pause","20x13-pause","20x15-pause","20x12-pause+slow","20x13-pause+slow","20x15-pause+slow"] },
+      { id:"oh_ext_thu", name:"Overhead Tricep Extension (rope)", meta:"2×12-15 · Light · Rest 90s",
         targets:["115x12","115x13","115x15","120x12","120x13","120x15","125x12","125x13","125x15","130x12","130x13","130x15"] },
-      { id:"pushdown_thu", name:"Cable Pushdown (straight bar)", meta:"2×12-15 · Light · Rest 60s",
-        targets:["150x12","150x13","150x15","160x12","160x13","160x15","170x12","170x13","170x15","180x12","180x13","180x15"] },
+      { id:"pushdown_thu", name:"EZ Bar Cable Pushdown", meta:"2×8-12 · Light · Rest 90s",
+        targets:["120x8","120x9","120x10","120x11","120x12","130x8","130x9","130x10","130x11","130x12","140x8","140x10"] },
     ]
   },
   fri: {
@@ -542,7 +291,7 @@ const PLAN = {
     exercises: [
       { id:"cs_row", name:"Chest Supported Row", meta:"4×5-7 · Heavy · Rest 2-3 min",
         targets:["135x5","135x6","135x7","145x5","145x6","145x7","155x5","155x6","155x7","165x5","165x6","165x7"] },
-      { id:"wide_pull_fri", name:"Wide Grip Pulldown", meta:"3×8-10 · Moderate · Rest 90s",
+      { id:"wide_pull_fri", name:"Wide Grip Pulldown", meta:"3×8-10 · Moderate · Rest 90s-2min",
         targets:["160x8","160x9","160x10","170x8","170x9","170x10","180x8","180x9","180x10","190x8","190x9","190x10"] },
       { id:"underhand_pull", name:"Underhand Pulldown", meta:"3×10-12 · Moderate · Rest 90s",
         targets:["100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12","130x10","130x11","130x12"] },
@@ -558,12 +307,12 @@ const PLAN = {
     label: "MONDAY — LEGS — HEAVY",
     dot: "mon",
     exercises: [
-      { id:"barbell_squat", name:"Barbell Squat", meta:"3×5-8 · Heavy · Rest 2-3 min",
+      { id:"barbell_squat", name:"Barbell Squat", meta:"3×10-12 · Heavy · Rest 2-3 min",
         targets:["135x10","135x11","135x12","145x10","145x11","145x12","155x10","155x11","155x12","165x10","165x11","165x12"] },
       { id:"hack_squat", name:"Hack Squat", meta:"3×8-10 · Moderate · Rest 90s",
-        targets:["find weight x8","same x9","same x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10"] },
+        targets:["180x8","180x9","180x10","190x8","190x9","190x10","200x8","200x9","200x10","210x8","210x9","210x10"] },
       { id:"hip_thrust", name:"Hip Thrust", meta:"3×8-10 · Moderate · Rest 90s",
-        targets:["find weight x8","same x9","same x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10","+10lbs x8","+10lbs x9","+10lbs x10"] },
+        targets:["135x8","135x9","135x10","145x8","145x9","145x10","155x8","155x9","155x10","165x8","165x9","165x10"] },
       { id:"seated_leg_curl", name:"Seated Leg Curl", meta:"3×10-12 · Light · Rest 60s",
         targets:["80x10","80x11","80x12","85x10","85x11","85x12","90x10","90x11","90x12","95x10","95x11","95x12"] },
       { id:"leg_extension", name:"Leg Extension", meta:"3×10-12 · Light · Rest 60s",
@@ -572,7 +321,7 @@ const PLAN = {
         targets:["100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12","130x10","130x11","130x12"] },
       { id:"cable_crunch_mon", name:"Cable Crunch", meta:"3×10-12 · Heavy · Rest 60s",
         targets:["150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12","180x10","180x11","180x12"] },
-      { id:"leg_raise_mon", name:"Hanging Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
+      { id:"leg_raise_mon", name:"Captain's Chair / Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
         targets:["BWx10","BWx11","BWx12","BWx12","BWx13","BWx15","BWx13","BWx14","BWx15","BWx14","BWx15","BWx15"] },
     ]
   },
@@ -586,29 +335,30 @@ const PLAN = {
         targets:["140x10","140x11","140x12","150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12"] },
       { id:"vbar_row", name:"V-Bar Cable Row", meta:"3×10-12 · Moderate · Rest 90s",
         targets:["find weight x10","same x11","same x12","+10lbs x10","+10lbs x11","+10lbs x12","+10lbs x10","+10lbs x11","+10lbs x12","+10lbs x10","+10lbs x11","+10lbs x12"] },
-      { id:"lat_raise_tue", name:"Cable Lateral Raise", meta:"3×15-20 · Light · Rest 60s",
-        targets:["20x15","20x17","20x20","22.5x15","22.5x17","22.5x20","25x15","25x17","25x20","27.5x15","27.5x17","27.5x20"] },
+      { id:"lat_raise_tue", name:"Cable Lateral Raise", meta:"3×15-20 · Light · Rest 90s",
+        targets:["20x15","20x17","20x20","20x15-slow","20x17-slow","20x20-slow","20x15-pause","20x17-pause","20x20-pause","20x15-pause+slow","20x17-pause+slow","20x20-pause+slow"] },
       { id:"hammer_curl", name:"Cable Hammer Curl", meta:"2×10-12 · Light · Rest 60s",
         targets:["90x10","90x11","90x12","100x10","100x11","100x12","110x10","110x11","110x12","120x10","120x11","120x12"] },
-      { id:"oh_ext_tue", name:"Overhead Extension (rope)", meta:"2×12-15 · Light · Rest 60s",
+      { id:"oh_ext_tue", name:"Overhead Extension (rope)", meta:"2×12-15 · Light · Rest 90s",
         targets:["110x12","110x13","110x15","115x12","115x13","115x15","120x12","120x13","120x15","125x12","125x13","125x15"] },
-      { id:"pushdown_tue", name:"Tricep Pushdown (straight bar)", meta:"2×12-15 · Light · Rest 60s",
-        targets:["135x12","135x13","135x15","140x12","140x13","140x15","145x12","145x13","145x15","150x12","150x13","150x15"] },
+      { id:"pushdown_tue", name:"EZ Bar Cable Pushdown", meta:"2×8-12 · Light · Rest 90s",
+        targets:["120x8","120x9","120x10","120x11","120x12","130x8","130x9","130x10","130x11","130x12","140x8","140x10"] },
       { id:"cable_crunch_tue", name:"Cable Crunch", meta:"3×10-12 · Heavy · Rest 60s",
         targets:["150x10","150x11","150x12","160x10","160x11","160x12","170x10","170x11","170x12","180x10","180x11","180x12"] },
-      { id:"leg_raise_tue", name:"Hanging Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
+      { id:"leg_raise_tue", name:"Captain's Chair / Leg Raise", meta:"3×10-15 · Bodyweight · Rest 60s",
         targets:["BWx10","BWx11","BWx12","BWx12","BWx13","BWx15","BWx13","BWx14","BWx15","BWx14","BWx15","BWx15"] },
     ]
   }
 };
 
-function save() { try { localStorage.setItem('overload_v3', JSON.stringify(logs)); } catch(e) {} }
+function save() { try { localStorage.setItem('overload_v4', JSON.stringify(logs)); } catch(e) {} }
 function getLog(w, id) { return logs[`w${w}_${id}`] || null; }
 function setLog(w, id, weight, reps) { logs[`w${w}_${id}`] = { weight, reps }; save(); }
 function delLog(w, id) { delete logs[`w${w}_${id}`]; save(); }
 
 function parseTarget(t) {
-  if (!t || t.startsWith('BW') || t.includes('find') || t.includes('same') || t.includes('+')) return null;
+  if (!t) return null;
+  if (t.startsWith('BW') || t.includes('find') || t.includes('same') || t.includes('+') || t.includes('slow') || t.includes('pause')) return null;
   const p = t.split('x');
   if (p.length < 2) return null;
   return { weight: parseFloat(p[0]), reps: parseInt(p[1]) };
@@ -622,10 +372,16 @@ function getStatus(target, lw, lr) {
   return 'missed';
 }
 
-function statusMsg(s) {
-  if (s === 'hit') return '✓ Target hit';
-  if (s === 'close') return '~ Almost — repeat this weight next week';
-  return '✗ Missed — repeat same weight next week';
+function statusMsg(s, target, lw, lr) {
+  const t = parseTarget(target);
+  if (s === 'hit') {
+    if (t && lw > t.weight) return { main: '✓ Target exceeded — go heavier next week', tip: `You did ${lw}lbs, target was ${t.weight}lbs. Jump up next week.` };
+    if (t && lr > t.reps + 2) return { main: '✓ Too many reps — go heavier next week', tip: `You did ${lr} reps, target was ${t.reps}. Increase weight next session.` };
+    return { main: '✓ Target hit — move to next week', tip: 'Perfect. Follow the map next session.' };
+  }
+  if (s === 'close') return { main: '~ Almost there — repeat same weight next week', tip: `You were close. Stay at ${lw}lbs next week and try to hit the rep target.` };
+  if (t) return { main: '✗ Missed — repeat same weight next week', tip: `Target was ${t.weight}lbs x ${t.reps}. Don't go up. If you miss 2 weeks in a row, drop weight 10%.` };
+  return { main: '✗ Missed — repeat same weight next week', tip: "Don't increase weight next week. Focus on form first." };
 }
 
 function buildWeekGrid() {
@@ -645,19 +401,17 @@ function buildWeekGrid() {
 function renderTab(key) {
   const day = PLAN[key];
   const el = document.getElementById(`tab-${key}`);
-
-  let html = `<div class="day-indicator"><div class="day-dot ${day.dot}"></div><div class="day-label-text">${day.label}</div></div><div class="cards" id="cards-${key}">`;
-  el.innerHTML = html + '</div>';
-
+  el.innerHTML = `<div class="day-indicator"><div class="day-dot ${day.dot}"></div><div class="day-label-text">${day.label}</div></div><div class="cards" id="cards-${key}"></div>`;
   const cards = document.getElementById(`cards-${key}`);
+
   day.exercises.forEach(ex => {
     const target = ex.targets[currentWeek - 1];
     const logged = getLog(currentWeek, ex.id);
     const status = logged ? getStatus(target, logged.weight, logged.reps) : null;
+    const msg = status ? statusMsg(status, target, logged.weight, logged.reps) : null;
 
     const c = document.createElement('div');
     c.className = 'card' + (status ? ` logged-${status}` : '');
-
     c.innerHTML = `
       <div class="card-header">
         <div>
@@ -684,7 +438,10 @@ function renderTab(key) {
         </div>
         <div class="result ${status ? status + ' show' : ''}" id="res-${ex.id}">
           <div class="rdot"></div>
-          <span>${status ? statusMsg(status) : ''}</span>
+          <div class="result-text">
+            <div class="result-main">${msg ? msg.main : ''}</div>
+            <div class="result-tip">${msg ? msg.tip : ''}</div>
+          </div>
         </div>
       </div>`;
     cards.appendChild(c);
@@ -708,6 +465,125 @@ function doClear(key, id) {
   buildWeekGrid();
 }
 
+function renderGuide() {
+  const el = document.getElementById('tab-guide');
+  el.innerHTML = `
+    <div class="day-indicator"><div class="day-dot thu"></div><div class="day-label-text">PROGRESSIVE OVERLOAD GUIDE</div></div>
+
+    <div class="guide-box">
+      <div class="guide-title">What To Do Each Week</div>
+      <div class="guide-row">
+        <div class="guide-scenario">Hit target weight AND reps with 1-2 reps left in tank</div>
+        <div class="guide-action ga-hit">✓ Move to next week on the map. Go up in weight or reps.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Hit target weight but 1 rep short</div>
+        <div class="guide-action ga-close">~ Repeat same weight next week. You're close.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Missed by 2+ reps or couldn't hit target weight</div>
+        <div class="guide-action ga-missed">✗ Repeat same weight next week. Don't go up.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Missed the same weight 2 weeks in a row</div>
+        <div class="guide-action ga-missed">✗ Drop weight 10% and rebuild from there.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Exceeded target by 3+ reps easily</div>
+        <div class="guide-action ga-hit">✓ Skip ahead on the map. Go heavier next week.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Strength drops 2 weeks in a row</div>
+        <div class="guide-action ga-missed">✗ Eat more carbs pre-workout. Check your deficit isn't too aggressive.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Consistently exhausted every session</div>
+        <div class="guide-action ga-missed">✗ Reduce deficit by 100-150 cal. Sleep 7-8 hours minimum.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">One random bad day</div>
+        <div class="guide-action ga-normal">→ Log it and move on. One bad session means nothing over 12 weeks.</div>
+      </div>
+    </div>
+
+    <div class="rest-guide">
+      <div class="rest-title">Rest Times</div>
+      <div class="rest-row"><div class="rest-type">Heavy compounds (Squat, Row, Press)</div><div class="rest-time">2-3 mins</div></div>
+      <div class="rest-row"><div class="rest-type">Moderate compounds (Pulldown, Machine)</div><div class="rest-time">90s - 2 mins</div></div>
+      <div class="rest-row"><div class="rest-type">Isolation (Curls, Laterals, Triceps)</div><div class="rest-time">90s - 2 mins</div></div>
+      <div class="rest-row"><div class="rest-type">Abs</div><div class="rest-time">60s</div></div>
+    </div>
+
+    <div class="guide-box">
+      <div class="guide-title">Rep Range Rules</div>
+      <div class="guide-row">
+        <div class="guide-scenario">Heavy (5-8 reps)</div>
+        <div class="guide-action ga-normal">Compounds only. 2-3 RIR. Long rest.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Moderate (8-12 reps)</div>
+        <div class="guide-action ga-normal">Machine compounds. 2 RIR. 90s rest.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Light (12-20 reps)</div>
+        <div class="guide-action ga-normal">Isolation only. 1 RIR. 60-90s rest.</div>
+      </div>
+    </div>
+
+    <div class="guide-box">
+      <div class="guide-title">Cut Rules</div>
+      <div class="guide-row">
+        <div class="guide-scenario">Daily protein</div>
+        <div class="guide-action ga-hit">190-200g minimum every day</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Calorie deficit</div>
+        <div class="guide-action ga-normal">300-400 cal max. Don't go aggressive.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Pre-workout meal</div>
+        <div class="guide-action ga-normal">Carbs 1-2 hours before every session</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Sleep</div>
+        <div class="guide-action ga-normal">7-8 hours. Non negotiable for recovery.</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Scale weight</div>
+        <div class="guide-action ga-normal">Aim for 0.5-1 lb loss per week</div>
+      </div>
+    </div>
+
+    <div class="guide-box">
+      <div class="guide-title">Lateral Raise (stuck at 20lbs)</div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 1-2</div>
+        <div class="guide-action ga-normal">20lbs x 12 — normal tempo</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 3-4</div>
+        <div class="guide-action ga-normal">20lbs x 15 — normal tempo</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 5-6</div>
+        <div class="guide-action ga-normal">20lbs x 12 — 3 sec slow eccentric</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 7-8</div>
+        <div class="guide-action ga-normal">20lbs x 15 — 3 sec slow eccentric</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 9-10</div>
+        <div class="guide-action ga-normal">20lbs x 12 — 2 sec pause at top</div>
+      </div>
+      <div class="guide-row">
+        <div class="guide-scenario">Weeks 11-12</div>
+        <div class="guide-action ga-normal">20lbs x 15 — pause + slow eccentric</div>
+      </div>
+    </div>
+  `;
+}
+
 function renderHistory() {
   const el = document.getElementById('tab-hist');
   const allEx = [...PLAN.thu.exercises, ...PLAN.fri.exercises, ...PLAN.mon.exercises, ...PLAN.tue.exercises];
@@ -717,13 +593,9 @@ function renderHistory() {
     if (PLAN.mon.exercises.find(e=>e.id===id)) return 'MON';
     return 'TUE';
   };
-
-  let html = '<div class="day-indicator"><div class="day-dot thu"></div><div class="day-label-text">ALL EXERCISES — 12 WEEK HISTORY</div></div>';
+  let html = '<div class="day-indicator"><div class="day-dot fri"></div><div class="day-label-text">ALL EXERCISES — 12 WEEK HISTORY</div></div>';
   allEx.forEach(ex => {
-    html += `<div class="hist-ex">
-      <div class="hist-ex-name">${ex.name}<span>${dayOf(ex.id)}</span></div>
-      <div class="hist-rows">
-        <div class="hist-row hist-hdr"><div>WK</div><div>TARGET</div><div>ACTUAL</div><div>STATUS</div></div>`;
+    html += `<div class="hist-ex"><div class="hist-ex-name">${ex.name}<span>${dayOf(ex.id)}</span></div><div class="hist-rows"><div class="hist-row hist-hdr"><div>WK</div><div>TARGET</div><div>ACTUAL</div><div>STATUS</div></div>`;
     for (let w = 1; w <= WEEKS; w++) {
       const t = ex.targets[w-1];
       const lg = getLog(w, ex.id);
@@ -762,16 +634,18 @@ function updateStats() {
 
 function switchTab(key) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  const tabs = ['thu','fri','mon','tue','hist'];
+  const tabs = ['thu','fri','mon','tue','guide','hist'];
   document.querySelectorAll('.tab')[tabs.indexOf(key)].classList.add('active');
   tabs.forEach(t => document.getElementById(`tab-${t}`).classList.toggle('hidden', t!==key));
   currentTab = key;
   if (key==='hist') renderHistory();
+  else if (key==='guide') renderGuide();
   else renderTab(key);
 }
 
 function renderCurrentTab() {
   if (currentTab==='hist') renderHistory();
+  else if (currentTab==='guide') renderGuide();
   else renderTab(currentTab);
 }
 
